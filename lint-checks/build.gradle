@@ -1,0 +1,34 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
+}
+
+jar {
+    manifest {
+        attributes('Lint-Registry-v2': 'com.catvinhquang.androidlintchecks.IssueRegistryImpl')
+    }
+}
+
+gradle.buildFinished {
+    def src = new File(rootProject.rootDir.absolutePath + '/lint-checks/build/libs/lint-checks.jar')
+    if (src.exists()) {
+        // To apply new lint checks, we need to put jar file in
+        // '~/.android/lint/' OR '/app/build/intermediates/lint/'
+
+        def dst = new File(System.getProperty('user.home') + '/.android/lint/lint-checks.jar')
+        dst.parentFile.mkdirs()
+        Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        // def dst = new File(rootProject.rootDir.absolutePath + '/app/build/intermediates/lint/lint-checks.jar')
+        // dst.parentFile.mkdirs()
+        // Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+        println('Updated lint checks')
+    }
+}

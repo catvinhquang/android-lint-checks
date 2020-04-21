@@ -1,0 +1,3 @@
+rootProject.name='ALC'
+include ':app'
+include ':lint-checks'
