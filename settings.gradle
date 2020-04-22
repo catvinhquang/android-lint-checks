@@ -1,3 +1,4 @@
 rootProject.name='ALC'
 include ':app'
+include ':lint-annotations'
 include ':lint-checks'

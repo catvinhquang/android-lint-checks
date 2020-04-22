@@ -26,7 +26,7 @@ import java.util.List;
  * the word "lint".
  **/
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("ALL")
 public class LintWordDetector extends Detector implements UastScanner {
 
     /**
@@ -37,7 +37,7 @@ public class LintWordDetector extends Detector implements UastScanner {
             "Full explanation of the issue.\n" +
                     "You can use some markdown markup such as `monospace`, *italic* and **bold**.\n" +
                     "When you modify this content, you need to reopen project to apply changes.",
-            Category.CORRECTNESS, 6, Severity.FATAL,
+            Category.CORRECTNESS, 1, Severity.FATAL,
             new Implementation(LintWordDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override

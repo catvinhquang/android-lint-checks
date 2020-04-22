@@ -24,7 +24,7 @@ import java.util.List;
  * Created by QuangCV on 21-Apr-2020
  **/
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings("ALL")
 public class MissingAuthorNameDetector extends Detector implements Detector.UastScanner {
 
     public static final Issue ISSUE = Issue.create(
@@ -32,7 +32,7 @@ public class MissingAuthorNameDetector extends Detector implements Detector.Uast
             "Full explanation of the issue.\n" +
                     "You can use some markdown markup such as `monospace`, *italic* and **bold**.\n" +
                     "When you modify this content, you need to reopen project to apply changes.",
-            Category.CORRECTNESS, 6, Severity.FATAL,
+            Category.CORRECTNESS, 1, Severity.FATAL,
             new Implementation(MissingAuthorNameDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override
