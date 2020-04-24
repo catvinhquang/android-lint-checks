@@ -19,6 +19,13 @@ public class MainActivity extends Activity {
         testSizeAnnotationDetector(100);
 
         testLargerThanZeroAnnotationDetector(-100);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 
     void testSizeAnnotationDetector(@Size int number) {

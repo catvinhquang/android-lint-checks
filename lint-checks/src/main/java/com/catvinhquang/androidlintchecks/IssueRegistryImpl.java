@@ -25,7 +25,8 @@ public class IssueRegistryImpl extends IssueRegistry {
         return Arrays.asList(LintWordDetector.ISSUE,
                 MissingAuthorNameDetector.ISSUE,
                 SizeAnnotationDetector.ISSUE,
-                LargerThanZeroAnnotationDetector.ISSUE);
+                LargerThanZeroAnnotationDetector.ISSUE,
+                NewThreadDetector.ISSUE);
     }
 
     @Override
