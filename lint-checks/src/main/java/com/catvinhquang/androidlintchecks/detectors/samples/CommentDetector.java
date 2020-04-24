@@ -1,4 +1,4 @@
-package com.catvinhquang.androidlintchecks.samples;
+package com.catvinhquang.androidlintchecks.detectors.samples;
 
 import com.android.tools.lint.client.api.UElementHandler;
 import com.android.tools.lint.detector.api.Category;
@@ -27,7 +27,7 @@ import java.util.List;
  **/
 
 @SuppressWarnings("ALL")
-public class LintWordDetector extends Detector implements UastScanner {
+public class CommentDetector extends Detector implements UastScanner {
 
     /**
      * Issue describing the problem and pointing to the detector implementation
@@ -38,7 +38,7 @@ public class LintWordDetector extends Detector implements UastScanner {
                     "You can use some markdown markup such as `monospace`, *italic* and **bold**.\n" +
                     "When you modify this content, you need to reopen project to apply changes.",
             Category.CORRECTNESS, 1, Severity.FATAL,
-            new Implementation(LintWordDetector.class, Scope.JAVA_FILE_SCOPE));
+            new Implementation(CommentDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override
     public List<Class<? extends UElement>> getApplicableUastTypes() {
@@ -59,7 +59,7 @@ public class LintWordDetector extends Detector implements UastScanner {
             @Override
             public void visitLiteralExpression(@NotNull ULiteralExpression expression) {
                 String string = UastLiteralUtils.getValueIfStringLiteral(expression);
-                if (string != null && string.toLowerCase().contains("lint")) {
+                if (string != null && string.toLowerCase().contains("hello world")) {
                     context.report(ISSUE, expression,
                             context.getLocation(expression),
                             "The keyword has been found.");

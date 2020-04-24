@@ -1,4 +1,4 @@
-package com.catvinhquang.androidlintchecks.samples;
+package com.catvinhquang.androidlintchecks.detectors.samples;
 
 import com.android.tools.lint.client.api.UElementHandler;
 import com.android.tools.lint.detector.api.Category;

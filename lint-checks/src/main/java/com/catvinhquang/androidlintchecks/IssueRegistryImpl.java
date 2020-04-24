@@ -3,9 +3,11 @@ package com.catvinhquang.androidlintchecks;
 import com.android.tools.lint.client.api.IssueRegistry;
 import com.android.tools.lint.detector.api.ApiKt;
 import com.android.tools.lint.detector.api.Issue;
-import com.catvinhquang.androidlintchecks.samples.LintWordDetector;
-import com.catvinhquang.androidlintchecks.samples.MissingAuthorNameDetector;
-import com.catvinhquang.androidlintchecks.samples.SizeAnnotationDetector;
+import com.catvinhquang.androidlintchecks.detectors.LargerThanZeroAnnotationDetector;
+import com.catvinhquang.androidlintchecks.detectors.NewThreadDetector;
+import com.catvinhquang.androidlintchecks.detectors.samples.CommentDetector;
+import com.catvinhquang.androidlintchecks.detectors.samples.MissingAuthorNameDetector;
+import com.catvinhquang.androidlintchecks.detectors.samples.SizeAnnotationDetector;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,7 @@ public class IssueRegistryImpl extends IssueRegistry {
     @NotNull
     @Override
     public List<Issue> getIssues() {
-        return Arrays.asList(LintWordDetector.ISSUE,
+        return Arrays.asList(CommentDetector.ISSUE,
                 MissingAuthorNameDetector.ISSUE,
                 SizeAnnotationDetector.ISSUE,
                 LargerThanZeroAnnotationDetector.ISSUE,
