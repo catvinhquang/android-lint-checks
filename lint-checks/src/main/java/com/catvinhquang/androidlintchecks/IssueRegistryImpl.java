@@ -3,6 +3,7 @@ package com.catvinhquang.androidlintchecks;
 import com.android.tools.lint.client.api.IssueRegistry;
 import com.android.tools.lint.detector.api.ApiKt;
 import com.android.tools.lint.detector.api.Issue;
+import com.catvinhquang.androidlintchecks.detectors.FixedAnnotationDetector;
 import com.catvinhquang.androidlintchecks.detectors.LargerThanZeroAnnotationDetector;
 import com.catvinhquang.androidlintchecks.detectors.NewThreadDetector;
 import com.catvinhquang.androidlintchecks.detectors.samples.CommentDetector;
@@ -28,7 +29,8 @@ public class IssueRegistryImpl extends IssueRegistry {
                 MissingAuthorNameDetector.ISSUE,
                 SizeAnnotationDetector.ISSUE,
                 LargerThanZeroAnnotationDetector.ISSUE,
-                NewThreadDetector.ISSUE);
+                NewThreadDetector.ISSUE,
+                FixedAnnotationDetector.ISSUE);
     }
 
     @Override

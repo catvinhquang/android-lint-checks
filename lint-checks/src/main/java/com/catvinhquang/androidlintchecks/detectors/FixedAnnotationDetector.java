@@ -9,20 +9,26 @@ import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 import com.catvinhquang.androidlintchecks.Annotations;
+import com.catvinhquang.androidlintchecks.Utils;
 import com.intellij.lang.jvm.JvmAnnotation;
 import com.intellij.lang.jvm.JvmParameter;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.impl.source.PsiFieldImpl;
-import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
-import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.impl.source.PsiParameterImpl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UExpression;
+import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.UastCallKind;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,21 +39,56 @@ import java.util.List;
 public class FixedAnnotationDetector extends Detector implements Detector.UastScanner {
 
     public static final Issue ISSUE = Issue.create(
-            "FixedAnnotationId", "",
-            "Full explanation of the issue.\n" +
-                    "You can use some markdown markup such as `monospace`, *italic* and **bold**.\n" +
-                    "When you modify this content, you need to reopen project to apply changes.",
+            "FixedAnnotationId", "", "",
             Category.CORRECTNESS, 1, Severity.FATAL,
             new Implementation(FixedAnnotationDetector.class, Scope.JAVA_FILE_SCOPE));
 
     @Override
     public List<Class<? extends UElement>> getApplicableUastTypes() {
-        return Collections.singletonList(UCallExpression.class);
+        return Arrays.asList(UMethod.class, UCallExpression.class);
     }
 
     @Override
     public UElementHandler createUastHandler(@NotNull JavaContext context) {
         return new UElementHandler() {
+            @Override
+            public void visitMethod(@NotNull UMethod node) {
+                JvmParameter[] params = node.getParameters();
+                for (JvmParameter p : params) {
+                    JvmAnnotation a = p.getAnnotation(Annotations.FIXED);
+                    if (a == null) {
+                        continue;
+                    }
+
+                    if (a instanceof PsiAnnotation) {
+                        // check annotation attribute
+                        PsiElement e = ((PsiAnnotation) a).findAttributeValue("value");
+                        try {
+                            PsiReferenceExpression expected = (PsiReferenceExpression) e;
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                            context.report(ISSUE, e, context.getLocation(e),
+                                    "Must be a reference expression");
+                        }
+
+                        // check parameter type
+                        String type = null;
+                        try {
+                            type = ((PsiPrimitiveType) p.getType()).getName();
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+                        if (!"int".equals(type)) {
+                            if (p instanceof PsiParameter) {
+                                e = ((PsiParameterImpl) p).getTypeElement();
+                                context.report(ISSUE, e, context.getLocation(e),
+                                        "Only integer is supported");
+                            }
+                        }
+                    }
+                }
+            }
+
             @Override
             public void visitCallExpression(@NotNull UCallExpression node) {
                 if (node.getKind() == UastCallKind.METHOD_CALL) {
@@ -58,42 +99,33 @@ public class FixedAnnotationDetector extends Detector implements Detector.UastSc
 
                     JvmParameter[] params = method.getParameters();
                     for (int i = 0; i < params.length; i++) {
-                        JvmAnnotation ja = params[i].getAnnotation(Annotations.FIXED);
-                        if (ja instanceof PsiAnnotationImpl) {
-                            PsiAnnotationImpl pa = (PsiAnnotationImpl) ja;
-                            int expectedValue = getAttributeValue(pa, "value");
+                        try {
+                            PsiAnnotation a = (PsiAnnotation) params[i].getAnnotation(Annotations.FIXED);
+                            PsiReferenceExpression expected = (PsiReferenceExpression) a.findAttributeValue("value");
+                            String expectedQualifiedName = Utils.getQualifiedName((PsiField) expected.resolve());
+                            String expectValue = Utils.removePackageName(expectedQualifiedName, a.getProject());
 
                             UExpression e = node.getArgumentForParameter(i);
-                            if (e != null) {
-                                Object o = e.evaluate();
-                                if (o instanceof Integer && (Integer) o != expectedValue) {
-                                    context.report(ISSUE, e, context.getLocation(e),
-                                            String.format("The value must be equal to %d.", expectedValue));
-                                }
+                            PsiReferenceExpression actual = null;
+                            String actualQualifiedName = null;
+                            try {
+                                actual = (PsiReferenceExpression) e.getSourcePsi();
+                                actualQualifiedName = Utils.getQualifiedName((PsiField) actual.resolve());
+                            } catch (Throwable t) {
+                                t.printStackTrace();
                             }
+
+                            if (actual == null || !expectedQualifiedName.equals(actualQualifiedName)) {
+                                context.report(ISSUE, e, context.getLocation(e),
+                                        "The value must be " + expectValue);
+                            }
+                        } catch (Throwable t) {
+                            t.printStackTrace();
                         }
                     }
                 }
             }
         };
-    }
-
-    private int getAttributeValue(PsiAnnotationImpl annotation,
-                                  String attributeName) {
-        int result = 0;
-        try {
-            result = Integer.parseInt(
-                    annotation.findAttributeValue(attributeName)
-                            .getText()
-            );
-        } catch (Throwable t1) {
-            try {
-                result = (int) ((PsiFieldImpl) ((PsiReferenceExpressionImpl) annotation.findAttributeValue("value")).resolve())
-                        .computeConstantValue();
-            } catch (Throwable t2) {
-            }
-        }
-        return result;
     }
 
 }

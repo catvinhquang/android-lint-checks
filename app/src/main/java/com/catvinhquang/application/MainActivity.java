@@ -5,9 +5,12 @@ import android.os.Bundle;
 
 import androidx.annotation.Size;
 
+import com.catvinhquang.androidlintannotations.Fixed;
 import com.catvinhquang.androidlintannotations.LargerThanZero;
 
 public class MainActivity extends Activity {
+
+    static final int CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,8 @@ public class MainActivity extends Activity {
 
             }
         });
+
+        testFixedAnnotation(100);
     }
 
     void testSizeAnnotationDetector(@Size int number) {
@@ -33,6 +38,10 @@ public class MainActivity extends Activity {
     }
 
     void testLargerThanZeroAnnotationDetector(@LargerThanZero int number) {
+        System.out.println(number);
+    }
+
+    void testFixedAnnotation(@Fixed(CODE) int number) {
         System.out.println(number);
     }
 
