@@ -21,7 +21,7 @@ class FixedAnnotationDetector : Detector(), UastScanner {
 
     companion object {
         val ISSUE: Issue = Issue.create(
-                "FixedAnnotationId", "", "",
+                "FixedAnnotation", "@Fixed", "Nothing",
                 CORRECTNESS, 1, Severity.FATAL,
                 Implementation(FixedAnnotationDetector::class.java, JAVA_FILE_SCOPE))
     }
