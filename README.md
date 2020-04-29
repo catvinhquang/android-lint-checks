@@ -11,3 +11,12 @@ Check custom lint check jar file is working:
 ```
 ~/Library/Android/sdk/tools/bin/lint --show
 ```
+
+Some gradle tasks:
+```bash
+# build jar
+./gradlew :lint-checks:build
+
+# run lint checks
+./gradlew :app:lintVnRelease
+```
