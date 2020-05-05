@@ -51,7 +51,8 @@ class CommentDetector : Detector(), UastScanner {
                 if (string != null && string.toLowerCase(Locale.getDefault()).contains("hello world")) {
                     context.report(ISSUE, node,
                             context.getLocation(node),
-                            "The keyword has been found.")
+                            "The keyword has been found.",
+                            fix().replace().all().with("test quick fix").build())
                 }
             }
         }

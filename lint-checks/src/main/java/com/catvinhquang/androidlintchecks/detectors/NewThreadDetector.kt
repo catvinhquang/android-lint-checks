@@ -29,8 +29,15 @@ class NewThreadDetector : Detector(), UastScanner {
     override fun visitConstructor(context: JavaContext,
                                   node: UCallExpression,
                                   constructor: PsiMethod) {
-        context.report(ISSUE, node, context.getLocation(node),
-                "Do not create Thread.")
+        context.report(ISSUE, node.uastParent, context.getLocation(node.uastParent!!),
+                "Xin thí chủ hãy tự trọng, đừng tạo thêm nghiệp nữa 🤧",
+                fix().name("Dạ! Em biết lỗi rồi, anh dạy bảo em đi 🍑")
+                        .replace().all()
+                        .with("executor.execute {\n" +
+                                "            // TODO hót vô đây! 🦆\n" +
+                                "\n" +
+                                "        }")
+                        .build())
     }
 
 }

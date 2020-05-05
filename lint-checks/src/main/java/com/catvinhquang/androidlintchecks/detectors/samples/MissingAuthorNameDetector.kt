@@ -41,7 +41,7 @@ class MissingAuthorNameDetector : Detector(), UastScanner {
                     var entered = false
                     var location: Location? = context.getNameLocation(node)
                     val comments = node.comments
-                    if (!comments.isEmpty()) {
+                    if (comments.isNotEmpty()) {
                         location = context.getNameLocation(comments[0])
                         for (i in comments) {
                             val content = i.asSourceString().toLowerCase()
